@@ -101,16 +101,38 @@ Score every paper on the same five criteria. **Fill only from papers read in ful
 | Paper | Venue / date | Search space | Comparators | Random-search baseline | Matched budget | Seeds | Significance test |
 |---|---|---|---|---|---|---|---|
 | **LLMO** (Zhong et al.) | DOCS 2024 · arXiv:2406.05433 | NAS-Bench-201 cell | GA, PSO, DE, CMA-ES, JADE, SHADE | **✗** | ✓ (FE fixed) | 30 | **✗ — means only, no std** |
-| **Feedback Memory** (Gu et al.) | arXiv:2603.12091 · Mar 2026 | Open code space | Single-shot generation only | **✗** | ✗ | **1** (seed 43) | ✗ |
+| **Feedback Memory** (Gu et al.) | arXiv:2603.12091 · Mar 2026 | Open code space | Single-shot generation only | **✗** | ✗ | **1** (seed 43) | ✗ vs. baseline (Spearman/Kendall trend test on own trajectory only) |
 | **Convergence Theory** (Adhikari et al.) | arXiv:2605.30103 · May 2026 | Open code space | None — no comparator | **✗** | ✗ | N = 12–16 | ✓ (Bonferroni) |
 | **GraphIR** (Liu et al.) | arXiv:2608.01633 · Aug 2026 | Open code space | CPG / CodeRAG / GraphCode representations | **✗** | ✓ (100 iters) | 3–10 | ✗ (mean ± std only) |
-| GENIUS | *to read* | | | | | | |
-| EvoPrompting | *to read* | | | | | | |
+| **GENIUS** (Zheng et al.) | arXiv:2304.10970 · Aug 2023 | **NAS-Bench-201** (CIFAR-10/100, ImageNet16-120) + NAS-Bench-Macro, Channel-Bench-Macro, ImageNet/MobileNetV2 | Best-known NAS methods (per space); **random sampling used on NAS-Bench-Macro only** | **✗ on NAS-Bench-201** | ✓ (10 iters) | 5 | ✗ (std only, no test) |
+| EvoPrompting (Chen et al.) | arXiv:2302.14838 · Feb 2023 | MNIST-1D, CLRS — not tabular NAS | Naive few-shot prompting; no-prompt-tuning ablation | **✗** | — | 4 seed models (MNIST-1D), 9 (CLRS) | ✗ |
 | **Ours** | — | NAS-Bench-201 cell | **Random**, greedy, GA, regularized evolution | **✓** | ✓ | **30** | ✓ |
 
-**The observation this table produces, stated plainly:** four papers, four different
-research groups, zero random-search baselines. Two report no variance at all. One
-runs a single seed. **The subfield has been measuring improvement against itself.**
+**The observation this table produces, stated plainly:** six papers, six different
+research groups, zero random-search baselines *on NAS-Bench-201* — even though one
+of them (GENIUS) uses a random-search baseline on a *different* benchmark in the same
+paper, which makes this look like an inconsistency the field hasn't caught rather than
+a convention nobody has thought of. Two report no variance at all. One runs a single
+seed. **The subfield has been measuring improvement against itself.**
+
+**GENIUS is the closest prior work by benchmark — closer than LLMO.** It runs on the
+identical NAS-Bench-201 space and all three datasets this project uses (LLMO optimises
+adversarial robustness, a different objective). At a 10-iteration budget over 5 trials
+it reports CIFAR-10 93.79±0.09, CIFAR-100 70.91±0.72, ImageNet16-120 44.96±1.02 against
+verified global optima of 94.37/73.51/47.31 (see `results/nas_bench_verification.md`).
+Its prompt design — current-best-only, no history — matches LLMO's, so the
+zero-history baseline in contribution 4 has two independent precedents, not one.
+**Worth weighing GENIUS alongside or instead of LLMO as the reproduction target in
+contribution 2.** Full detail in `paper/related_work_scan.md` under "FOURTH CHECK."
+
+**EvoPrompting is not a collision risk on this benchmark** (MNIST-1D/CLRS, not
+NAS-Bench-201) but is worth citing precisely: it does pass performance history
+(accuracy + param count as few-shot in-context examples), and its own ablation shows
+the method **needs soft prompt-tuning to work** — "in-context examples without
+prompt-tuning does not perform nearly as well." That's a real dependency this project
+deliberately avoids (per "What is deliberately NOT in this paper"), so it is worth one
+sentence in Related Work explaining why a frozen-LLM design is the right call here
+rather than an oversight.
 
 ---
 
@@ -189,13 +211,13 @@ Recorded so it stays out.
 | **Feedback Memory** · 2603.12091 | ✅ 20 Aug | K=5 diagnostic triples in open code space. Baseline is single-shot only, **one seed**. Owns "structured history" — cite, do not claim. |
 | **Convergence Theory** · 2605.30103 | ✅ 20 Aug | Proves the process improves against itself; **no comparator anywhere**. Theorem 8 justifies our benchmark choice. Asks for third-party replication. |
 | **GraphIR** · 2608.01633 | ✅ 20 Aug | Representation paper, different benchmarks, no collision. Sets the multi-seed bar at 3–10. |
-| GENIUS | ☐ | Its serialisation design — the decision to copy or beat. *(carried from 18 Aug)* |
-| EvoPrompting | ☐ | Performance history or code only? Note: needs soft prompt-tuning; we do not. |
+| **GENIUS** · 2304.10970 | ✅ 10 Sep | Shares NAS-Bench-201 exactly (all 3 datasets) — closest prior work by benchmark, closer than LLMO. Current-best-only prompt, no history. Uses random baseline on NAS-Bench-Macro but **not** on NAS-Bench-201 — the gap is an inconsistency, not an oversight born of ignorance. 5 trials, 10-iter budget, no significance test. |
+| **EvoPrompting** · 2302.14838 | ✅ 10 Sep | Passes performance history (accuracy + param count) as few-shot examples, but **needs soft prompt-tuning to work** — ablation shows in-context examples alone underperform. Runs on MNIST-1D/CLRS, not NAS-Bench-201. No random baseline. The prompt-tuning dependency is the reason to state, not assume, that this project's frozen-LLM design is deliberate. |
 | Yu et al., ICLR 2020 | ☐ *optional* | *"Evaluating the search phase of NAS."* The genre precedent. **Not a prerequisite for anything. Use as shadowing material or skip.** |
 
-> ### ⛔ READING IS CLOSED FOR PHASE 0 — 20 Aug 2026
+> ### ⛔ READING IS CLOSED FOR PHASE 0 — 20 Aug 2026 (GENIUS/EvoPrompting closed out 10 Sep)
 >
-> **Four papers were read on 20 Aug and they resolved the novelty question. That question is answered and does not get reopened.**
+> **Four papers were read on 20 Aug and they resolved the novelty question against the 2026 scan. GENIUS and EvoPrompting were the two rows still open from the original prerequisite list (`paper_primer.md` §6) and were read in full — not just abstract — on 10 Sep; neither changes the novelty verdict, but GENIUS is now the closest prior work by benchmark and should be weighed against LLMO for the reproduction slot (contribution 2). That question is answered and does not get reopened.**
 >
 > The remaining rows are optional and none of them blocks a single line of code. **The next paper sessions build, they do not read:** benchmark setup on Tue 25 Aug, random-search baseline on Thu 27 Aug. Related Work on 1 Sep is written from the four papers already read.
 >

@@ -2,6 +2,9 @@
 structure and its measured accuracy in one block, so the model can reason
 about which edges/ops correlate with performance instead of pattern-matching
 structure alone.
+
+Accuracy goes in search-loop prompts because it is the feedback signal,
+and never in a held-out evaluation prompt.
 """
 
 from search_space import ArchConfig, random_arch
@@ -27,7 +30,7 @@ def as_table(arch):
 
 def as_combined(arch, accuracy):
     adjacency = as_adjacency(arch)
-    return f"{adjacency}\nAccuracy: {accuracy:.2f}%"
+    return f"{adjacency}\nCIFAR-10 test accuracy (hp=200): {accuracy:.2f}%"
 
 
 
