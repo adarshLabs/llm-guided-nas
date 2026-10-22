@@ -1,5 +1,10 @@
 # Random Baseline (NATS-Bench-TSS, CIFAR-10)
 
+> **Single seed. Superseded for comparison purposes by `results/multi_seed_baseline.md`,**
+> which repeats this exact measurement over 10 seeds and reports the maximum with a
+> standard deviation. The max below is one order statistic from one draw and should not
+> be quoted as a baseline on its own.
+
 - Seed: 42
 - nats_bench version: 1.8
 - Sample size: 100 random architectures

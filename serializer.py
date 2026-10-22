@@ -7,11 +7,17 @@ Accuracy goes in search-loop prompts because it is the feedback signal,
 and never in a held-out evaluation prompt.
 """
 
-from search_space import ArchConfig, random_arch
-from nats_bench import create
+from search_space import ArchConfig, random_arch, OPS, N_NODES
 
 
-N_NODES = 4
+
+OP_PHRASE = {
+    "none":         "no connection",
+    "skip_connect": "a skip connection",
+    "nor_conv_1x1": "a 1x1 convolution",
+    "nor_conv_3x3": "a 3x3 convolution",
+    "avg_pool_3x3": "3x3 average pooling",
+}
 
 
 def as_adjacency(arch):
@@ -28,13 +34,30 @@ def as_table(arch):
 
     return "\n".join(table)
 
-def as_combined(arch, accuracy):
-    adjacency = as_adjacency(arch)
-    return f"{adjacency}\nCIFAR-10 test accuracy (hp=200): {accuracy:.2f}%"
+
+def as_nats(arch):
+    return arch.to_arch_str()
 
 
+def as_prose(arch):
+    by_to = {}
+    for frm, to, op in arch.edges:
+        src = "the input" if frm==0 else f"node {frm}"
+        by_to.setdefault(to, []).append(f"{OP_PHRASE[op]} from {src}")
+
+    out = []
+    for to, parts in sorted(by_to.items()):
+        if len(parts)>1:
+            parts = [ ", ".join(parts[:-1]), parts[-1]]
+        out.append(f"Node {to} takes {' and '.join(parts)}.")
+
+    return " ".join(out)
+
+def as_combined(arch, accuracy, fmt=as_adjacency):
+    return f"{fmt(arch)}\nCIFAR-10 test accuracy (hp=200): {accuracy:.2f}%"
 
 def main():
+    from nats_bench import create
     api = create(None, 'tss', verbose=False, fast_mode=True)
     for i in range(5):
         arch = random_arch(N_NODES)
