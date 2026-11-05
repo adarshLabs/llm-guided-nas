@@ -56,3 +56,5 @@ A 100-draw random search returns a maximum of **93.832 ± 0.183** across 10 seed
 Against the verified global optimum of 94.37, the headroom from the random-search mean is 0.538 accuracy points, or 2.94 standard deviations. **That gap survives the error bars.** Random search reliably stops short of the optimum by more than the run-to-run noise, so there is a real margin for a guided method to claim, and a result inside that margin would not be explainable as a lucky seed.
 
 Caveat stated rather than buried: 10 seeds is a small sample and these are distances in standard deviations, not a significance test. The per-seed table above is the primary evidence.
+
+Seed 0 check, 29 Oct: min = 10.000, max = 93.880, min is 10.000: True
