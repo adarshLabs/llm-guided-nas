@@ -55,7 +55,7 @@ def build_prompt(arch_list, fmt=as_adjacency):
         for i, (arch, acc) in enumerate(arch_list)
     )
 
-    return f"""You are searching the NAS-Bench-201 cell space for the architecture with the highest CIFAR-10 test accuracy.
+    return f"""You are searching the NAS-Bench-201 cell space for the architecture with the highest CIFAR-10 validation accuracy.
     A cell has 4 nodes. Node 0 is the input. Every node i receives one edge from every node j < i, so there are exactly 6 edges. Each edge carries exactly one operation from this set:
     {", ".join(OPS)}
     An architecture is written as a single string: the incoming edges of node 1, then node 2, then node 3, joined by "+". Within a group each edge is written operation~source_node, and every edge is wrapped in pipes.

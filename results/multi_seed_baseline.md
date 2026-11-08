@@ -15,16 +15,16 @@
 
 | Seed | Mean | Max | Min | Std within seed |Valid-selected test |
 |------|------|-----|-----|-----------------|----|
-| 42 | 88.303 | 93.770 | 68.073 | 5.634 |93.770 
-| 0 | 86.338 | 93.880 | 10.000 | 14.921 |93.880 
-| 1 | 86.182 | 93.990 | 10.000 | 14.666 |93.990 
-| 2 | 84.713 | 94.245 | 10.000 | 19.482 |94.245 
-| 3 | 85.005 | 93.743 | 10.000 | 18.064 |93.743 
-| 4 | 87.417 | 93.717 | 10.000 | 12.360 |93.640 
-| 5 | 88.142 | 93.770 | 10.000 | 12.043 |93.770 
-| 6 | 86.400 | 93.560 | 10.000 | 14.564 |93.560 
-| 7 | 85.172 | 93.827 | 10.000 | 16.453 |93.827 
-| 8 | 87.086 | 93.820 | 10.000 | 12.609 |93.820 
+| 42 | 88.303 | 93.770 | 68.073 | 5.634 |93.770|
+| 0 | 86.338 | 93.880 | 10.000 | 14.921 |93.880|
+| 1 | 86.182 | 93.990 | 10.000 | 14.666 |93.990|
+| 2 | 84.713 | 94.245 | 10.000 | 19.482 |94.245|
+| 3 | 85.005 | 93.743 | 10.000 | 18.064 |93.743|
+| 4 | 87.417 | 93.717 | 10.000 | 12.360 |93.640|
+| 5 | 88.142 | 93.770 | 10.000 | 12.043 |93.770|
+| 6 | 86.400 | 93.560 | 10.000 | 14.564 |93.560|
+| 7 | 85.172 | 93.827 | 10.000 | 16.453 |93.827|
+| 8 | 87.086 | 93.820 | 10.000 | 12.609 |93.820|
 
 ## Sampled architecture indices
 
@@ -50,10 +50,10 @@
 
 ## Reading
 
-A 100-draw random search returns a maximum of **93.832 ± 0.183** across 10 seeds. The single-seed figure this project has been quoting, 93.770, sits 0.34 standard deviations below that mean.
+A 100-draw random search returns a maximum of **93.825 ± 0.190** across 10 seeds. The single-seed figure this project has been quoting, 93.770, sits 0.29 standard deviations below that mean.
 
-**So 93.770 is an ordinary draw, not a bar.** It is one order statistic from one seed, it lands inside the normal spread of the same procedure repeated, and beating it demonstrates nothing. The comparison this paper has to make instead is against 93.832 ± 0.183: a search result is only interesting once it clears roughly 94.015.
+**So 93.770 is an ordinary draw, not a bar.** It is one order statistic from one seed, it lands inside the normal spread of the same procedure repeated, and beating it demonstrates nothing. The comparison this paper has to make instead is against 93.825 ± 0.190: a search result is only interesting once it clears roughly 94.014.
 
-Against the verified global optimum of 94.37, the headroom from the random-search mean is 0.538 accuracy points, or 2.94 standard deviations. **That gap survives the error bars.** Random search reliably stops short of the optimum by more than the run-to-run noise, so there is a real margin for a guided method to claim, and a result inside that margin would not be explainable as a lucky seed.
+Against the verified global optimum of 94.37, the headroom from the random-search mean is 0.546 accuracy points, or 2.88 standard deviations. **That gap survives the error bars.** Random search reliably stops short of the optimum by more than the run-to-run noise, so there is a real margin for a guided method to claim, and a result inside that margin would not be explainable as a lucky seed.
 
 Caveat stated rather than buried: 10 seeds is a small sample and these are distances in standard deviations, not a significance test. The per-seed table above is the primary evidence.

@@ -163,13 +163,13 @@ def main():
         f.write("|------|------|-----|-----|-----------------|----|\n")
         for r in rows:
             f.write(f"| {r['seed']} | {r['mean']:.3f} | {r['maximum']:.3f} | "
-                    f"{r['minimum']:.3f} | {r['stdev']:.3f} |{r['valid_best_test']:.3f} \n")
+                    f"{r['minimum']:.3f} | {r['stdev']:.3f} |{r['valid_best_test']:.3f}|\n")
         f.write("\n## Sampled architecture indices\n\n")
         for r in rows:
             f.write(f"**Seed {r['seed']}:** "
                     + ", ".join(str(idx) for idx in r["sampled_indices"]) + "\n\n")
         f.write("## Reading\n\n")
-        f.write(reading(mean_of_maximas, stdev_of_maximas))
+        f.write(reading(mean_vbt, std_vbt))
 
     print(f"Mean_of_means: {mean_of_means}")
     print(f"Stdev_of_means: {stdev_of_means}")
