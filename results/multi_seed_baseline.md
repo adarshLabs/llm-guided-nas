@@ -50,7 +50,7 @@
 
 ## Reading
 
-A 100-draw random search returns a maximum of **93.825 ± 0.190** across 10 seeds. The single-seed figure this project has been quoting, 93.770, sits 0.29 standard deviations below that mean.
+A 100-draw random search returns a validation-selected test accuracy of**93.825 ± 0.190** across 10 seeds. The single-seed figure this project has been quoting, 93.770, sits 0.29 standard deviations below that mean.
 
 **So 93.770 is an ordinary draw, not a bar.** It is one order statistic from one seed, it lands inside the normal spread of the same procedure repeated, and beating it demonstrates nothing. The comparison this paper has to make instead is against 93.825 ± 0.190: a search result is only interesting once it clears roughly 94.014.
 

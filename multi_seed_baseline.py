@@ -66,7 +66,7 @@ def reading(mean_vbt, std_vbt):
 
     out = []
     out.append(
-        f"A 100-draw random search returns a maximum of "
+        f"A 100-draw random search returns a validation-selected test accuracy of"
         f"**{mean_vbt:.3f} ± {std_vbt:.3f}** across {len(SEEDS)} seeds. "
         f"The single-seed figure this project has been quoting, {SINGLE_SEED_MAX:.3f}, "
         f"sits {abs(z_single):.2f} standard deviations "
