@@ -2,6 +2,7 @@ from nats_bench import create
 from search_space import random_arch
 from importlib.metadata import version
 import random, statistics, os
+from bench import lookup
 
 N_NODES = 4
 SEED = 0
@@ -18,11 +19,10 @@ def main():
         idx = api.query_index_by_arch(arch_str)
 
         assert idx>=0, "Correct String format"
-        info = api.get_more_info(idx, 'cifar10', hp='200', is_random=False)
-        print(f"{i}th run {idx} test accuracy: {info['test-accuracy']}")
-        test_accuracies.append(info['test-accuracy'])
+        valid, test = lookup(api, idx)
+        print(f"{i}th run {idx} test accuracy: {test}")
+        test_accuracies.append(test)
         sampled_indices.append(idx)
-        api.clear_params(idx)
 
     mean = statistics.mean(test_accuracies)
     minimum = min(test_accuracies)

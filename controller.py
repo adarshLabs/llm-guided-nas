@@ -7,6 +7,7 @@ from nats_bench import create
 from serializer import as_combined, as_adjacency, as_nats, as_prose
 from dotenv import load_dotenv
 from google.genai import types
+from bench import lookup
 load_dotenv()
 
 MODEL = "gemini-3.5-flash-lite"
@@ -94,19 +95,18 @@ def main():
         idx = api.query_index_by_arch(arch_str)
         if idx < 0:
             raise ValueError(f"arch string not in NATS-Bench: {arch_str}")
-        acc = api.get_more_info(idx, 'cifar10', hp='200', is_random=False)['test-accuracy']
-        api.clear_params(idx)
-        return acc, idx
+        valid, test = lookup(api, idx)
+        return valid, test, idx
 
 
     random.seed(SEED)
     arch_list = []
     for n in range(5):
         arch = random_arch(N_NODES)
-        acc, idx = accuracy_of(arch)
+        acc, test, idx = accuracy_of(arch)
         arch_list.append((arch, acc))
         log(phase="seed", iteration=-1, arch_str=arch.to_arch_str(),
-            idx=idx, accuracy=acc, parse_ok=True)
+            idx=idx, accuracy=acc,test_accuracy=test, parse_ok=True)
 
     prompt = build_prompt(arch_list, fmt)
 
@@ -138,11 +138,11 @@ def main():
         seen.add(arch_str)
         queries += 1
 
-        accuracy, idx = accuracy_of(result_arch)
+        accuracy, test, idx = accuracy_of(result_arch)
         #print(text, idx, accuracy)
         log(phase="search", iteration=calls-1, query=queries, raw_response=text,
             arch_str=result_arch.to_arch_str(), idx=idx,
-            accuracy=accuracy, parse_ok=True, duplicate=False)
+            accuracy=accuracy,test_accuracy=test, parse_ok=True, duplicate=False)
 
         arch_list.append((result_arch, accuracy))
         prompt  = build_prompt(arch_list, fmt)
