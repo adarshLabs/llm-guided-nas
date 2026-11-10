@@ -7,13 +7,14 @@ from bench import lookup
 N_NODES = 4
 SEED = 0
 
-def main():
-    random.seed(SEED)
+def main(seed=SEED, budget=100, write_files=True):
+    random.seed(seed)
     api = create(None, 'tss', verbose=False, fast_mode=True)
     nats_bench_version = version("nats_bench")
     test_accuracies = []
     sampled_indices = []
-    for i in range(100):
+    records = []
+    for i in range(budget):
         arch = random_arch(N_NODES)
         arch_str = arch.to_arch_str()
         idx = api.query_index_by_arch(arch_str)
@@ -23,32 +24,35 @@ def main():
         print(f"{i}th run {idx} test accuracy: {test}")
         test_accuracies.append(test)
         sampled_indices.append(idx)
+        records.append((idx, valid, test))
 
     mean = statistics.mean(test_accuracies)
     minimum = min(test_accuracies)
     maximum = max(test_accuracies)
     stdev = statistics.stdev(test_accuracies)
 
-    print("Here are the evaluation metrics:")
-    print(f"MEAN: {mean:.3f}")
-    print(f"MIN: {minimum:.3f}")
-    print(f"MAX: {maximum:.3f}")
-    print(f"STANDARD DEVIATION: {stdev:.3f}")
+    # print("Here are the evaluation metrics:")
+    # print(f"MEAN: {mean:.3f}")
+    # print(f"MIN: {minimum:.3f}")
+    # print(f"MAX: {maximum:.3f}")
+    # print(f"STANDARD DEVIATION: {stdev:.3f}")
 
-    os.makedirs("results", exist_ok=True)
-    with open("results/multi_seed_baseline.md", "a") as f:
-        f.write(f"Seed {SEED} check, 29 Oct: min = {minimum:.3f}, max = {maximum:.3f}, min is 10.000: {bool(minimum==10.000)}\n")
-        # f.write("# Random Baseline (NATS-Bench-TSS, CIFAR-10)\n\n")
-        # f.write(f"- Seed: {SEED}\n")
-        # f.write(f"- nats_bench version: {nats_bench_version}\n")
-        # f.write("- Sample size: 100 random architectures\n")
-        # f.write("- Setting: hp='200', is_random=False (averaged over all trials)\n\n")
-        # f.write(f"| Mean | Max | Min | Std |\n")
-        # f.write(f"|------|-----|-----|-----|\n")
-        # f.write(f"| {mean:.3f} | {maximum:.3f} | {minimum:.3f} | {stdev:.3f} |\n\n")
-        # f.write("## Sampled architecture indices\n\n")
-        # f.write(", ".join(str(idx) for idx in sampled_indices) + "\n")
+    if write_files:
+        os.makedirs("results", exist_ok=True)
+        with open("results/multi_seed_baseline.md", "a") as f:
+            f.write(f"Seed {SEED} check, 29 Oct: min = {minimum:.3f}, max = {maximum:.3f}, min is 10.000: {bool(minimum==10.000)}\n")
+            # f.write("# Random Baseline (NATS-Bench-TSS, CIFAR-10)\n\n")
+            # f.write(f"- Seed: {SEED}\n")
+            # f.write(f"- nats_bench version: {nats_bench_version}\n")
+            # f.write("- Sample size: 100 random architectures\n")
+            # f.write("- Setting: hp='200', is_random=False (averaged over all trials)\n\n")
+            # f.write(f"| Mean | Max | Min | Std |\n")
+            # f.write(f"|------|-----|-----|-----|\n")
+            # f.write(f"| {mean:.3f} | {maximum:.3f} | {minimum:.3f} | {stdev:.3f} |\n\n")
+            # f.write("## Sampled architecture indices\n\n")
+            # f.write(", ".join(str(idx) for idx in sampled_indices) + "\n")
 
+    return records
 
 if __name__=="__main__":
     main()

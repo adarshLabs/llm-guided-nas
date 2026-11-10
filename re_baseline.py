@@ -24,11 +24,12 @@ def query(api, arch_str):
     valid, test = lookup(api, idx)
     return idx, valid, test
 
-def main():
-    random.seed(SEED)
+def main(seed = SEED, budget =100, write_files=True):
+    random.seed(seed)
     api = create(None, 'tss', verbose=False, fast_mode=True)
     nats_bench_version = version("nats_bench")
     history = []
+    records = []
     pop = deque()
     best = dict()
     for i in range(POP):
@@ -39,11 +40,12 @@ def main():
                 break
 
         history.append(idx)
+        records.append((idx, accuracy, test))
         pop.append((arch_str, accuracy))
         if not best or accuracy> best["accuracy"]:
             best = {"idx":idx, "accuracy":accuracy, "test":test}
 
-    for i in range(POP, BUDGET):
+    for i in range(POP, budget):
         while True:
             sample = random.sample(list(pop), SAMPLE)
             parent = max(sample, key = lambda x: x[1])
@@ -53,22 +55,25 @@ def main():
             if idx not in history:
                 break
 
-        if not best or accuracy> best["accuracy"]:
+        if not best or accuracy > best["accuracy"]:
             best = {"idx":idx, "accuracy":accuracy, "test":test}
         history.append(idx)
+        records.append((idx, accuracy, test))
         pop.append((child_arch, accuracy))
         pop.popleft()
 
-    os.makedirs("results", exist_ok=True)
-    with open("results/re_seed0.md", "w") as f:
-        f.write(f"Regularised Evoluation with Seed {SEED}\n\n")
-        f.write(f"- best VALID : {best['accuracy']:.3f}, its Test: {best['test']:.3f}, idx : {best['idx']}\n")
-        f.write(f"- queries: {len(history)}, unique: {len(set(history))}\n")
-        f.write("- setting: CIFAR-10, hp='200', is_random=False, POP=20, SAMPLE=5\n")
+    if write_files:
+        os.makedirs("results", exist_ok=True)
+        with open("results/re_seed0.md", "w") as f:
+            f.write(f"Regularised Evoluation with Seed {SEED}\n\n")
+            f.write(f"- best VALID : {best['accuracy']:.3f}, its Test: {best['test']:.3f}, idx : {best['idx']}\n")
+            f.write(f"- queries: {len(history)}, unique: {len(set(history))}\n")
+            f.write("- setting: CIFAR-10, hp='200', is_random=False, POP=20, SAMPLE=5\n")
 
     print("Best:", best)
     print("queries:", len(history), "unique:", len(set(history)))
-    assert len(history) == BUDGET
+    assert len(history) == budget
+    return records
 
 
 if __name__=="__main__":
